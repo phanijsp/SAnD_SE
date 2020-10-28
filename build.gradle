@@ -1,0 +1,25 @@
+plugins {
+    id 'java'
+}
+jar {
+    manifest {
+        attributes 'Main-Class': 'MainUI'
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testImplementation 'junit:junit:4.12'
+    compile 'com.formdev:flatlaf:0.43'
+    compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.6'
+}
