@@ -22,6 +22,10 @@ public class SE_RequestHandler extends Thread {
 
             String searchQuery = dataInputStream.readUTF();
             System.out.println("\nClient at " + socket.getInetAddress().toString() + " searched for " + searchQuery);
+            QueryExecutor queryExecutor = new QueryExecutor(ConnectionManager.getConnection());
+            Long lastUpdateTime = queryExecutor.getTableLastUpdated(searchQuery);
+            System.out.println(lastUpdateTime);
+
 
             Thread.sleep(5000);
 

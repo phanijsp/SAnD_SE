@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import javax.swing.JTextArea;
 
 public class ConnectionManager {
+    static Connection conn = null;
     static String ip = "";
     static String username = "";
     static String password = "";
@@ -18,7 +19,22 @@ public class ConnectionManager {
         ConnectionManager.dbName = dbName;
     }
     public static Connection getConnection() {
-        Connection conn = null;
+        try {
+            if(conn==null){
+                initialize();
+            }else {
+                if(conn.isClosed()){
+                    initialize();
+                }
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return conn;
+    }
+
+    public static void initialize(){
         try {
             Class.forName("com.mysql.jdbc.Driver");
             System.out.println("\nLoaded jdbc driver!");
@@ -32,9 +48,7 @@ public class ConnectionManager {
         catch (SQLException e) {
             e.printStackTrace();
             System.out.println("\nFailed to connect to mysql server!");
-
         }
-        return conn;
     }
 
 }
