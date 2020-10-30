@@ -5,31 +5,30 @@ import java.io.IOException;
 import java.net.*;
 
 import javax.swing.JTextArea;
-public class SE_RequestHandler extends Thread{
-    JTextArea textArea;
+
+public class SE_RequestHandler extends Thread {
     Socket socket;
-    public SE_RequestHandler(JTextArea textArea, Socket socket) {
-        this.textArea = textArea;
+
+    public SE_RequestHandler(Socket socket) {
         this.socket = socket;
     }
 
     @Override
     public void run() {
-        textArea.append("\nClient at "+socket.getInetAddress().toString());
+        System.out.println("\nClient at " + socket.getInetAddress().toString());
         try {
             DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
             DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
 
             String searchQuery = dataInputStream.readUTF();
-            textArea.append("\nClient at "+socket.getInetAddress().toString()+" searched for "+searchQuery);
+            System.out.println("\nClient at " + socket.getInetAddress().toString() + " searched for " + searchQuery);
 
             Thread.sleep(5000);
 
             dataOutputStream.writeUTF("{\"name\":\"blablabla\"}");
             dataOutputStream.writeUTF("!Q2!89!@09!@");
 
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             // TODO Auto-generated catch block
