@@ -14,11 +14,11 @@ public class QueryExecutor {
     public long getTableLastUpdated(String query) {
         ResultSet resultSet = null;
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("Select ? from ? where ? = '?'", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            PreparedStatement preparedStatement = connection.prepareStatement("Select ? from ? where ? = ?", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             preparedStatement.setString(1, "lastUpdate");
             preparedStatement.setString(2, "updateLogs");
             preparedStatement.setString(3, "tableName");
-            preparedStatement.setString(4, query);
+            preparedStatement.setString(4, "'"+query+"'");
 
             resultSet = preparedStatement.executeQuery();
         } catch (SQLException e) {
