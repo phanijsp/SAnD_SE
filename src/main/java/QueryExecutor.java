@@ -23,7 +23,7 @@ public class QueryExecutor {
         }
         if(resultSet!=null){
             try {
-                resultSet.absolute(0);
+                resultSet.absolute(1);
                 return Long.parseLong(resultSet.getString(2));
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
