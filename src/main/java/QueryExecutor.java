@@ -18,7 +18,7 @@ public class QueryExecutor {
             preparedStatement.setString(1, "lastUpdate");
             preparedStatement.setString(2, "updateLogs");
             preparedStatement.setString(3, "tableName");
-            preparedStatement.setString(4, "'"+query+"'");
+            preparedStatement.setString(4, query);
 
             resultSet = preparedStatement.executeQuery();
         } catch (SQLException e) {
