@@ -6,9 +6,10 @@ import java.net.*;
 
 import javax.swing.JTextArea;
 
+
 public class SE_RequestHandler extends Thread {
     Socket socket;
-
+    private final long timeConstant = 3600000;
     public SE_RequestHandler(Socket socket) {
         this.socket = socket;
     }
@@ -23,21 +24,28 @@ public class SE_RequestHandler extends Thread {
             String searchQuery = dataInputStream.readUTF();
             System.out.println("\nClient at " + socket.getInetAddress().toString() + " searched for " + searchQuery);
             QueryExecutor queryExecutor = new QueryExecutor(ConnectionManager.getConnection());
-            Long lastUpdateTime = queryExecutor.getTableLastUpdated(searchQuery);
-            System.out.println(lastUpdateTime);
 
+            long lastUpdateTime = queryExecutor.getTableLastUpdated(searchQuery);
 
-            Thread.sleep(5000);
+            if((lastUpdateTime == 0) ||
+                    ((System.currentTimeMillis() - lastUpdateTime) > timeConstant)){
+                updateKeywordTable(searchQuery);
+            }else{
+                getKeywordTable(searchQuery);
+            }
 
             dataOutputStream.writeUTF("{\"name\":\"blablabla\"}");
             dataOutputStream.writeUTF("!Q2!89!@09!@");
 
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         }
+
+    }
+    public void updateKeywordTable(String searchQuery){
+
+    }
+    public void getKeywordTable(String searchQuery){
 
     }
 
