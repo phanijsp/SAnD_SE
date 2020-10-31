@@ -23,10 +23,16 @@ public class QueryExecutor {
         }
         if(resultSet!=null){
             try {
-                resultSet.absolute(1);
-                return Long.parseLong(resultSet.getString(1));
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
+                resultSet.last();
+                if(resultSet.getRow()!=0){
+                    resultSet.absolute(1);
+                    return Long.parseLong(resultSet.getString(1));
+                }else{
+                    return 0;
+                }
+
+            } catch (SQLException sqlException) {
+                sqlException.printStackTrace();
                 return 0;
             }
         }else{
