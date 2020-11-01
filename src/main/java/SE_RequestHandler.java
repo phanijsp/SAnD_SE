@@ -33,10 +33,8 @@ public class SE_RequestHandler extends Thread {
             if((lastUpdateTime == 0) ||
                     ((System.currentTimeMillis() - lastUpdateTime) > timeConstant)){
                 updateKeywordTable(searchQuery);
-                getKeywordTable(searchQuery);
-            }else{
-                getKeywordTable(searchQuery);
             }
+            getKeywordTable(searchQuery);
 
             dataOutputStream.writeUTF("{\"name\":\"blablabla\"}");
             dataOutputStream.writeUTF("!Q2!89!@09!@");
@@ -50,9 +48,13 @@ public class SE_RequestHandler extends Thread {
         TorrentSweeper torrentSweeper = new TorrentSweeper();
         ArrayList<TorrentDescriptor> torrentDescriptors = torrentSweeper.getTorrents(searchQuery);
         System.out.println("In updateKeywordTable:" + torrentDescriptors.size());
-        queryExecutor.dropTableIfExists(searchQuery);
-        queryExecutor.createTorrentDataTable(searchQuery);
-        queryExecutor.insertTorrentDataIntoTable(searchQuery, torrentDescriptors);
+        if(torrentDescriptors.size()>0){
+            System.out.println("Updating table "+searchQuery);
+            queryExecutor.dropTableIfExists(searchQuery);
+            queryExecutor.createTorrentDataTable(searchQuery);
+            queryExecutor.insertTorrentDataIntoTable(searchQuery, torrentDescriptors);
+            queryExecutor.updateTableLogs(searchQuery, System.currentTimeMillis());
+        }
     }
     public void getKeywordTable(String searchQuery){
 

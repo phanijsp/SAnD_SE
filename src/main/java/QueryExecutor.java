@@ -40,6 +40,17 @@ public class QueryExecutor {
                 return 0;
         }
     }
+    public void updateTableLogs(String tableName, long lastUpdated){
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO `updateLogs` VALUES(?, ?) ON DUPLICATE KEY UPDATE `lastUpdate` = ?");
+            preparedStatement.setString(1, tableName);
+            preparedStatement.setLong(2, lastUpdated);
+            preparedStatement.setLong(3, lastUpdated);
+            preparedStatement.executeUpdate();
+        } catch (SQLException sqlException) {
+            sqlException.printStackTrace();
+        }
+    }
 
     public void dropTableIfExists(String tableName){
         try {
