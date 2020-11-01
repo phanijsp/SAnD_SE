@@ -1,14 +1,29 @@
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.util.ArrayList;
 
 public class TorrentSweeper {
     private ArrayList<TorrentDescriptor> torrent_search_results = new ArrayList<>();
-    public ArrayList<TorrentDescriptor> getTorrents(String query, JSONArray field_descriptors_array) {
+    public ArrayList<TorrentDescriptor> getTorrents(String query) {
         torrent_search_results.clear();
         try {
+            File file = new File("/home/phani_jsp/SAnD_SE/Engine.json");
+            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = br.readLine()) != null) {
+                sb.append(line + "\n");
+            }
+            br.close();
+
+            String result = sb.toString();
+
+            JSONObject jsonObject = new JSONObject(result);
+            JSONArray field_descriptors_array = jsonObject.getJSONArray("descriptors");
+
+
             ArrayList<TorrentListGrabber> torrentListGrabbers = new ArrayList<>();
             for(int i = 0 ; i < field_descriptors_array.length() ; i ++){
                 JSONObject descriptorObject = field_descriptors_array.getJSONObject(i);
@@ -57,6 +72,10 @@ public class TorrentSweeper {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             onJobDone(new ArrayList<TorrentListGrabber>());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return torrent_search_results;
     }

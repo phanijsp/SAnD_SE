@@ -3,6 +3,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.*;
+import java.util.ArrayList;
 
 import javax.swing.JTextArea;
 
@@ -43,7 +44,9 @@ public class SE_RequestHandler extends Thread {
 
     }
     public void updateKeywordTable(String searchQuery){
-
+        TorrentSweeper torrentSweeper = new TorrentSweeper();
+        ArrayList<TorrentDescriptor> torrentDescriptors = torrentSweeper.getTorrents(searchQuery);
+        System.out.println("In updateKeywordTable:" + torrentDescriptors.size());
     }
     public void getKeywordTable(String searchQuery){
 
