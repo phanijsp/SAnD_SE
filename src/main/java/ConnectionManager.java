@@ -21,9 +21,11 @@ public class ConnectionManager {
     public static Connection getConnection() {
         try {
             if(conn==null){
+                System.out.println("Connection is null, initializing...");
                 initialize();
             }else {
                 if(conn.isClosed()){
+                    System.out.println("Connection is closed, initializing...");
                     initialize();
                 }
             }
