@@ -58,6 +58,7 @@ public class TorrentListGrabber extends Thread {
                                                 leechElements.get(finalI).text(),
                                                 sizeElements.get(finalI).text(),
                                                 addedElements.get(finalI).text(),
+                                                torrentSource.getSource(),
                                                 magnetLink
                                         ));
                             }

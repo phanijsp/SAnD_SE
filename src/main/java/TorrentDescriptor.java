@@ -29,7 +29,7 @@ public class TorrentDescriptor {
     private String baseURL;
     private String endURL;
 
-    public TorrentDescriptor(String baseURL, String endURL, String title, String seeds, String leeches, String size, String added, String endURLMagnetFieldDescriptor) {
+    public TorrentDescriptor(String baseURL, String endURL, String title, String seeds, String leeches, String size, String added, String source, String endURLMagnetFieldDescriptor) {
         this.baseURL = baseURL;
         this.endURL = endURL;
         this.title = title;
@@ -37,6 +37,7 @@ public class TorrentDescriptor {
         this.leeches = leeches;
         this.size = size;
         this.added = added;
+        this.source = source;
         this.endURLMagnetFieldsDescriptor = endURLMagnetFieldDescriptor;
 
     }
@@ -50,6 +51,11 @@ public class TorrentDescriptor {
     private String leeches;
     private String size;
     private String added;
+    private String source;
+
+    public String getSource() {
+        return source;
+    }
 
     public String getBaseURL() {
         return baseURL;

@@ -11,6 +11,7 @@ import javax.swing.JTextArea;
 public class SE_RequestHandler extends Thread {
     Socket socket;
     private final long timeConstant = 3600000;
+    QueryExecutor queryExecutor;
     public SE_RequestHandler(Socket socket) {
         this.socket = socket;
     }
@@ -18,19 +19,21 @@ public class SE_RequestHandler extends Thread {
     @Override
     public void run() {
         System.out.println("\nClient at " + socket.getInetAddress().toString());
+        queryExecutor = new QueryExecutor(ConnectionManager.getConnection());
         try {
             DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
             DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
 
             String searchQuery = dataInputStream.readUTF();
             System.out.println("\nClient at " + socket.getInetAddress().toString() + " searched for " + searchQuery);
-            QueryExecutor queryExecutor = new QueryExecutor(ConnectionManager.getConnection());
+
 
             long lastUpdateTime = queryExecutor.getTableLastUpdated(searchQuery);
 
             if((lastUpdateTime == 0) ||
                     ((System.currentTimeMillis() - lastUpdateTime) > timeConstant)){
                 updateKeywordTable(searchQuery);
+                getKeywordTable(searchQuery);
             }else{
                 getKeywordTable(searchQuery);
             }
@@ -47,6 +50,9 @@ public class SE_RequestHandler extends Thread {
         TorrentSweeper torrentSweeper = new TorrentSweeper();
         ArrayList<TorrentDescriptor> torrentDescriptors = torrentSweeper.getTorrents(searchQuery);
         System.out.println("In updateKeywordTable:" + torrentDescriptors.size());
+        queryExecutor.dropTableIfExists(searchQuery);
+        queryExecutor.createTorrentDataTable(searchQuery);
+        queryExecutor.insertTorrentDataIntoTable(searchQuery, torrentDescriptors);
     }
     public void getKeywordTable(String searchQuery){
 
