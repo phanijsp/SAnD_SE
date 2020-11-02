@@ -89,8 +89,8 @@ public class QueryExecutor {
             try {
                 PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO `" + tableName + "` VALUES(?,?,?,?,?,?,?,?)");
                 preparedStatement.setString(1, torrentDescriptor.getTitle());
-                preparedStatement.setString(2, torrentDescriptor.getSeeds());
-                preparedStatement.setString(3, torrentDescriptor.getLeeches());
+                preparedStatement.setString(2, torrentDescriptor.getSeeds().replace(",",""));
+                preparedStatement.setString(3, torrentDescriptor.getLeeches().replace(",",""));
                 preparedStatement.setString(4, torrentDescriptor.getSize());
                 preparedStatement.setString(5, torrentDescriptor.getAdded());
                 preparedStatement.setString(6, torrentDescriptor.getSource());
