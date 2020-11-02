@@ -99,6 +99,9 @@ public class QueryExecutor {
                 preparedStatement.executeUpdate();
             } catch (SQLException sqlException) {
                 sqlException.printStackTrace();
+                System.out.println("\ntitle : "+torrentDescriptor.getTitle()+"\n");
+                System.out.println("\nSeeds : "+torrentDescriptor.getSeeds()+"\n");
+                System.out.println("\nLeeches : "+torrentDescriptor.getSeeds()+"\n");
             }
         }
     }
