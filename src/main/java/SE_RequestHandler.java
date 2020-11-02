@@ -11,7 +11,7 @@ import javax.swing.JTextArea;
 
 public class SE_RequestHandler extends Thread {
     Socket socket;
-    private final long timeConstant = 3600000;
+    private final long timeConstant = 36000000;
     QueryExecutor queryExecutor;
     public SE_RequestHandler(Socket socket) {
         this.socket = socket;
@@ -26,6 +26,7 @@ public class SE_RequestHandler extends Thread {
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
 
             String searchQuery = dataInputStream.readUTF();
+            searchQuery = searchQuery.trim();
             System.out.println("\nClient at " + socket.getInetAddress().toString() + " searched for " + searchQuery);
 
 
@@ -33,6 +34,7 @@ public class SE_RequestHandler extends Thread {
 
             if((lastUpdateTime == 0) ||
                     ((System.currentTimeMillis() - lastUpdateTime) > timeConstant)){
+                System.out.println("Updating table for "+searchQuery+" ...");
                 updateKeywordTable(searchQuery);
             }
             String result = queryExecutor.getKeywordTorrentsInJSON(searchQuery).toString();
