@@ -34,10 +34,9 @@ public class SE_RequestHandler extends Thread {
                     ((System.currentTimeMillis() - lastUpdateTime) > timeConstant)){
                 updateKeywordTable(searchQuery);
             }
-            getKeywordTable(searchQuery);
+            String result = queryExecutor.getKeywordTorrentsInJSON(searchQuery).toString();
 
-            dataOutputStream.writeUTF("{\"name\":\"blablabla\"}");
-            dataOutputStream.writeUTF("!Q2!89!@09!@");
+            dataOutputStream.writeUTF(result);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -56,8 +55,4 @@ public class SE_RequestHandler extends Thread {
             queryExecutor.updateTableLogs(searchQuery, System.currentTimeMillis());
         }
     }
-    public void getKeywordTable(String searchQuery){
-        System.out.println(queryExecutor.getKeywordTorrentsInJSON(searchQuery).toString());
-    }
-
 }

@@ -129,7 +129,17 @@ public class QueryExecutor {
         JSONArray jsonArray = new JSONArray();
         ArrayList<KeywordTorrent> keywordTorrents = getTorrentDataFromKeywordTable(tableName);
         for (int i = 0; i < keywordTorrents.size(); i++) {
-            jsonArray.put(i, keywordTorrents.get(i));
+            JSONObject jsonObjectKT = new JSONObject();
+            KeywordTorrent keywordTorrent = keywordTorrents.get(i);
+            jsonObjectKT.put("torrentTitle", keywordTorrent.getTorrentTitle());
+            jsonObjectKT.put("torrentSeeds", keywordTorrent.getTorrentSeeds());
+            jsonObjectKT.put("torrentLeeches", keywordTorrent.getTorrentLeeches());
+            jsonObjectKT.put("torrentSize", keywordTorrent.getTorrentSize());
+            jsonObjectKT.put("torrentAdded", keywordTorrent.getTorrentAdded());
+            jsonObjectKT.put("TorrentSource", keywordTorrent.getTorrentSource());
+            jsonObjectKT.put("TorrentSourceURL", keywordTorrent.getTorrentSourceURL());
+            jsonObjectKT.put("TorrentMagnetURI", keywordTorrent.getTorrentMagnetURI());
+            jsonArray.put(i, jsonObjectKT);
         }
         jsonObject.put("keyword_torrents", jsonArray);
         return jsonObject;
