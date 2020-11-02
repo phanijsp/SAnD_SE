@@ -1,5 +1,8 @@
 
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,7 +11,8 @@ import java.util.ArrayList;
 
 public class QueryExecutor {
     Connection connection;
-    public QueryExecutor(Connection connection){
+
+    public QueryExecutor(Connection connection) {
         this.connection = connection;
     }
 
@@ -22,13 +26,13 @@ public class QueryExecutor {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        if(resultSet!=null){
+        if (resultSet != null) {
             try {
                 resultSet.last();
-                if(resultSet.getRow()!=0){
+                if (resultSet.getRow() != 0) {
                     resultSet.absolute(1);
                     return Long.parseLong(resultSet.getString(1));
-                }else{
+                } else {
                     return 0;
                 }
 
@@ -36,11 +40,12 @@ public class QueryExecutor {
                 sqlException.printStackTrace();
                 return 0;
             }
-        }else{
-                return 0;
+        } else {
+            return 0;
         }
     }
-    public void updateTableLogs(String tableName, long lastUpdated){
+
+    public void updateTableLogs(String tableName, long lastUpdated) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO `updateLogs` VALUES(?, ?) ON DUPLICATE KEY UPDATE `lastUpdate` = ?");
             preparedStatement.setString(1, tableName);
@@ -52,17 +57,18 @@ public class QueryExecutor {
         }
     }
 
-    public void dropTableIfExists(String tableName){
+    public void dropTableIfExists(String tableName) {
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("DROP TABLE IF EXISTS `"+tableName+"`");
+            PreparedStatement preparedStatement = connection.prepareStatement("DROP TABLE IF EXISTS `" + tableName + "`");
             preparedStatement.executeUpdate();
         } catch (SQLException sqlException) {
             sqlException.printStackTrace();
         }
     }
-    public void createTorrentDataTable(String tableName){
+
+    public void createTorrentDataTable(String tableName) {
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("CREATE TABLE `"+tableName+"`(torrentTitle VARCHAR(512)," +
+            PreparedStatement preparedStatement = connection.prepareStatement("CREATE TABLE `" + tableName + "`(torrentTitle VARCHAR(512)," +
                     " torrentSeeds INT," +
                     " torrentLeeches INT," +
                     " torrentSize TEXT NOT NULL," +
@@ -78,23 +84,55 @@ public class QueryExecutor {
 
     }
 
-    public void insertTorrentDataIntoTable(String tableName, ArrayList<TorrentDescriptor> torrentDescriptors){
-        for(TorrentDescriptor torrentDescriptor : torrentDescriptors){
+    public void insertTorrentDataIntoTable(String tableName, ArrayList<TorrentDescriptor> torrentDescriptors) {
+        for (TorrentDescriptor torrentDescriptor : torrentDescriptors) {
             try {
-                PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO `"+tableName+"` VALUES(?,?,?,?,?,?,?,?)");
+                PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO `" + tableName + "` VALUES(?,?,?,?,?,?,?,?)");
                 preparedStatement.setString(1, torrentDescriptor.getTitle());
                 preparedStatement.setString(2, torrentDescriptor.getSeeds());
                 preparedStatement.setString(3, torrentDescriptor.getLeeches());
                 preparedStatement.setString(4, torrentDescriptor.getSize());
                 preparedStatement.setString(5, torrentDescriptor.getAdded());
                 preparedStatement.setString(6, torrentDescriptor.getSource());
-                preparedStatement.setString(7, (torrentDescriptor.getBaseURL()+torrentDescriptor.getEndURL()));
+                preparedStatement.setString(7, (torrentDescriptor.getBaseURL() + torrentDescriptor.getEndURL()));
                 preparedStatement.setString(8, torrentDescriptor.getEndURLFieldsDescriptor());
                 preparedStatement.executeUpdate();
             } catch (SQLException sqlException) {
                 sqlException.printStackTrace();
             }
         }
+    }
+
+    public ArrayList<KeywordTorrent> getTorrentDataFromKeywordTable(String tableName) {
+        ArrayList<KeywordTorrent> keywordTorrents = new ArrayList<>();
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM `" + tableName + "`");
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                keywordTorrents.add(new KeywordTorrent(resultSet.getString(1),
+                        resultSet.getString(2),
+                        resultSet.getString(3),
+                        resultSet.getString(4),
+                        resultSet.getString(5),
+                        resultSet.getString(6),
+                        resultSet.getString(7),
+                        resultSet.getString(8)));
+            }
+        } catch (SQLException sqlException) {
+            sqlException.printStackTrace();
+        }
+        return keywordTorrents;
+    }
+
+    public JSONObject getKeywordTorrentsInJSON(String tableName) {
+        JSONObject jsonObject = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
+        ArrayList<KeywordTorrent> keywordTorrents = new ArrayList<>();
+        for (int i = 0; i < keywordTorrents.size(); i++) {
+            jsonArray.put(i, keywordTorrents.get(i));
+        }
+        jsonObject.put("keyword_torrents", jsonArray);
+        return jsonObject;
     }
 
 }

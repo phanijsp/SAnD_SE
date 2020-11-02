@@ -57,7 +57,7 @@ public class SE_RequestHandler extends Thread {
         }
     }
     public void getKeywordTable(String searchQuery){
-
+        System.out.println(queryExecutor.getKeywordTorrentsInJSON(searchQuery).toString());
     }
 
 }
