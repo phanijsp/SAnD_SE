@@ -127,7 +127,7 @@ public class QueryExecutor {
     public JSONObject getKeywordTorrentsInJSON(String tableName) {
         JSONObject jsonObject = new JSONObject();
         JSONArray jsonArray = new JSONArray();
-        ArrayList<KeywordTorrent> keywordTorrents = new ArrayList<>();
+        ArrayList<KeywordTorrent> keywordTorrents = getTorrentDataFromKeywordTable(tableName);
         for (int i = 0; i < keywordTorrents.size(); i++) {
             jsonArray.put(i, keywordTorrents.get(i));
         }
