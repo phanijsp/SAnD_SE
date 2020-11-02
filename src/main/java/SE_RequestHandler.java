@@ -2,6 +2,7 @@
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.*;
 import java.util.ArrayList;
 
@@ -22,7 +23,7 @@ public class SE_RequestHandler extends Thread {
         queryExecutor = new QueryExecutor(ConnectionManager.getConnection());
         try {
             DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
-            DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
 
             String searchQuery = dataInputStream.readUTF();
             System.out.println("\nClient at " + socket.getInetAddress().toString() + " searched for " + searchQuery);
@@ -36,7 +37,7 @@ public class SE_RequestHandler extends Thread {
             }
             String result = queryExecutor.getKeywordTorrentsInJSON(searchQuery).toString();
 
-            dataOutputStream.writeUTF(result);
+            objectOutputStream.writeObject(result);
 
         } catch (IOException e) {
             e.printStackTrace();
