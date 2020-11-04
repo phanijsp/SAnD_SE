@@ -26,7 +26,7 @@ public class SE_RequestHandler extends Thread {
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
 
             String searchQuery = dataInputStream.readUTF();
-            searchQuery = searchQuery.trim();
+            searchQuery = searchQuery.trim().toLowerCase();
             System.out.println("\nClient at " + socket.getInetAddress().toString() + " searched for " + searchQuery);
 
 
