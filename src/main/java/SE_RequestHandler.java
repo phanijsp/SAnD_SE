@@ -12,7 +12,10 @@ import javax.swing.JTextArea;
 public class SE_RequestHandler extends Thread {
     Socket socket;
     private final long timeConstant = 36000000;
+    private final String searchConstant = "·½ÄÒÕØÞðøúþĂĔĜĦ";
+    private final String trendingConstant = "ĨĭĲĸļłŇŌŕś";
     QueryExecutor queryExecutor;
+
     public SE_RequestHandler(Socket socket) {
         this.socket = socket;
     }
@@ -26,32 +29,35 @@ public class SE_RequestHandler extends Thread {
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
 
             String searchQuery = dataInputStream.readUTF();
-            searchQuery = searchQuery.trim().toLowerCase();
-            System.out.println("\nClient at " + socket.getInetAddress().toString() + " searched for " + searchQuery);
+            if (searchQuery.startsWith(searchConstant)) {
+                searchQuery = searchQuery.replace(searchConstant, "");
+                searchQuery = searchQuery.trim().toLowerCase();
+                System.out.println("\nClient at " + socket.getInetAddress().toString() + " searched for " + searchQuery);
 
+                long lastUpdateTime = queryExecutor.getTableLastUpdated(searchQuery);
 
-            long lastUpdateTime = queryExecutor.getTableLastUpdated(searchQuery);
-
-            if((lastUpdateTime == 0) ||
-                    ((System.currentTimeMillis() - lastUpdateTime) > timeConstant)){
-                System.out.println("Updating table for "+searchQuery+" ...");
-                updateKeywordTable(searchQuery);
+                if ((lastUpdateTime == 0) ||
+                        ((System.currentTimeMillis() - lastUpdateTime) > timeConstant)) {
+                    System.out.println("Updating table for " + searchQuery + " ...");
+                    updateKeywordTable(searchQuery);
+                }
+                String result = queryExecutor.getKeywordTorrentsInJSON(searchQuery).toString();
+                objectOutputStream.writeObject(result);
+            }else if(searchQuery.startsWith(trendingConstant)){
+                searchQuery = searchQuery.replace(trendingConstant,"");
             }
-            String result = queryExecutor.getKeywordTorrentsInJSON(searchQuery).toString();
-
-            objectOutputStream.writeObject(result);
-
         } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
-    public void updateKeywordTable(String searchQuery){
+
+    public void updateKeywordTable(String searchQuery) {
         TorrentSweeper torrentSweeper = new TorrentSweeper();
         ArrayList<TorrentDescriptor> torrentDescriptors = torrentSweeper.getTorrents(searchQuery);
         System.out.println("In updateKeywordTable:" + torrentDescriptors.size());
-        if(torrentDescriptors.size()>0){
-            System.out.println("Updating table "+searchQuery);
+        if (torrentDescriptors.size() > 0) {
+            System.out.println("Updating table " + searchQuery);
             queryExecutor.dropTableIfExists(searchQuery);
             queryExecutor.createTorrentDataTable(searchQuery);
             queryExecutor.insertTorrentDataIntoTable(searchQuery, torrentDescriptors);
