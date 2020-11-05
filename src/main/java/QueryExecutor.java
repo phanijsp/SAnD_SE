@@ -16,11 +16,13 @@ public class QueryExecutor {
         this.connection = connection;
     }
 
-    public long getTableLastUpdated(String query) {
+    public long getTableLastUpdated(String tableName) {
+        tableName = "keyword"+tableName;
+
         ResultSet resultSet = null;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("Select lastUpdate from updateLogs where tableName = ?", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            preparedStatement.setString(1, query);
+            preparedStatement.setString(1, tableName);
 
             resultSet = preparedStatement.executeQuery();
         } catch (SQLException e) {
@@ -46,6 +48,8 @@ public class QueryExecutor {
     }
 
     public void updateTableLogs(String tableName, long lastUpdated) {
+        tableName = "keyword"+tableName;
+
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO `updateLogs` VALUES(?, ?) ON DUPLICATE KEY UPDATE `lastUpdate` = ?");
             preparedStatement.setString(1, tableName);
@@ -58,6 +62,7 @@ public class QueryExecutor {
     }
 
     public void dropTableIfExists(String tableName) {
+        tableName = "keyword"+tableName;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("DROP TABLE IF EXISTS `" + tableName + "`");
             preparedStatement.executeUpdate();
@@ -67,6 +72,8 @@ public class QueryExecutor {
     }
 
     public void createTorrentDataTable(String tableName) {
+        tableName = "keyword"+tableName;
+
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("CREATE TABLE `" + tableName + "`(torrentTitle VARCHAR(512)," +
                     " torrentSeeds INT," +
@@ -85,6 +92,8 @@ public class QueryExecutor {
     }
 
     public void insertTorrentDataIntoTable(String tableName, ArrayList<TorrentDescriptor> torrentDescriptors) {
+        tableName = "keyword"+tableName;
+
         for (TorrentDescriptor torrentDescriptor : torrentDescriptors) {
             try {
                 PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO `" + tableName + "` VALUES(?,?,?,?,?,?,?,?)");
@@ -107,6 +116,8 @@ public class QueryExecutor {
     }
 
     public ArrayList<KeywordTorrent> getTorrentDataFromKeywordTable(String tableName) {
+        tableName = "keyword"+tableName;
+
         ArrayList<KeywordTorrent> keywordTorrents = new ArrayList<>();
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM `" + tableName + "`");
@@ -128,6 +139,8 @@ public class QueryExecutor {
     }
 
     public JSONObject getKeywordTorrentsInJSON(String tableName) {
+        tableName = "keyword"+tableName;
+
         JSONObject jsonObject = new JSONObject();
         JSONArray jsonArray = new JSONArray();
         ArrayList<KeywordTorrent> keywordTorrents = getTorrentDataFromKeywordTable(tableName);
