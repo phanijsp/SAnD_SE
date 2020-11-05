@@ -116,7 +116,6 @@ public class QueryExecutor {
     }
 
     public ArrayList<KeywordTorrent> getTorrentDataFromKeywordTable(String tableName) {
-        tableName = "keyword"+tableName;
 
         ArrayList<KeywordTorrent> keywordTorrents = new ArrayList<>();
         try {
