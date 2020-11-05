@@ -51,6 +51,8 @@ public class SE_RequestHandler extends Thread {
                     System.out.println("Received a get trending request from client at "+socket.getInetAddress());
                     DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
                     dataOutputStream.writeUTF(result);
+                    System.out.println("Wrote response "+result+"to client at "+socket.getInetAddress());
+                    dataOutputStream.close();
                 }else if(searchQuery.equals("set")){
                     System.out.println("Received a set trending request from client at "+socket.getInetAddress());
                 }
