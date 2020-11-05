@@ -44,15 +44,16 @@ public class SE_RequestHandler extends Thread {
                 String result = queryExecutor.getKeywordTorrentsInJSON(searchQuery).toString();
                 objectOutputStream.writeObject(result);
             }else if(searchQuery.startsWith(trendingConstant)){
+                System.out.println("trending request "+searchQuery+" from "+socket.getInetAddress());
                 searchQuery = searchQuery.replace(trendingConstant,"");
                 if(searchQuery.equals("get")){
                     String result = queryExecutor.getTrending();
+                    System.out.println("Received a get trending request from client at "+socket.getInetAddress());
                     DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
                     dataOutputStream.writeUTF(result);
                 }else if(searchQuery.equals("set")){
                     System.out.println("Received a set trending request from client at "+socket.getInetAddress());
                 }
-
             }
         } catch (IOException e) {
             e.printStackTrace();
