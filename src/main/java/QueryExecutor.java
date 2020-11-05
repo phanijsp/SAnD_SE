@@ -160,4 +160,19 @@ public class QueryExecutor {
         return jsonObject;
     }
 
+    public String getTrending(){
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement("Select * from `trending`");
+            ResultSet resultSet = preparedStatement.executeQuery();
+            StringBuilder result = new StringBuilder();
+            while(resultSet.next()){
+                result.append("·").append(resultSet.getString("title"));
+            }
+            return result.toString();
+        } catch (SQLException sqlException) {
+            sqlException.printStackTrace();
+            return null;
+        }
+    }
+
 }
