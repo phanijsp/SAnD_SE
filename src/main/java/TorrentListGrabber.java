@@ -70,8 +70,9 @@ public class TorrentListGrabber extends Thread {
                 while(true){
                     boolean done = true;
                     for(Thread t : torrentDescriptorThreads){
-                        if(t.isAlive()){
+                        if (t.isAlive()) {
                             done = false;
+                            break;
                         }
                     }
                     if(done){
