@@ -32,12 +32,13 @@ public class TorrentListGrabber extends Thread {
             Elements addedElements = doc.select(torrentSource.getAdded_descriptor());
 
 
-            System.out.println("run: eUE "+ endURLElements.size()+
-                    "\nrun: tTE "+ torrentTitleElements.size()+
-                    "\nrun: sE "+ seedElements.size() +
-                    "\nrun: lE "+ leechElements.size()+
-                    "\nrun: sizeE "+ sizeElements.size()+
-                    "\nrun: aE"+ addedElements.size());
+
+            System.out.println("Found eUE "+ endURLElements.size()+
+                    "tTE "+ torrentTitleElements.size()+
+                    "sE "+ seedElements.size() +
+                    "lE "+ leechElements.size()+
+                    "sizeE "+ sizeElements.size()+
+                    "aE"+ addedElements.size() + " at \n" + searchURL);
 
             if (isValidData(new Elements[]{endURLElements, torrentTitleElements, seedElements, leechElements, sizeElements, addedElements})) {
                System.out.println("run: valid data");
