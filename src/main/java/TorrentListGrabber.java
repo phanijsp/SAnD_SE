@@ -112,7 +112,7 @@ public class TorrentListGrabber extends Thread {
     private String getMagnet(String endUrl){
         String magnetLink = "";
         try {
-            Document document = Jsoup.connect(torrentSource.getBaseURL()+endUrl).get();
+            Document document = Jsoup.connect(torrentSource.getBaseURL()+endUrl).followRedirects(true).timeout(5000).get();
             Elements magnets = document.select(torrentSource.getEndURLMagnet_descriptor());
             if(magnets.size()>0){
                 return magnets.get(0).attr("href");
