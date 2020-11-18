@@ -47,7 +47,6 @@ public class TorrentSweeper {
             }
                     while (true){
                         boolean done = true;
-                        System.out.println(torrentListGrabbers.size());
                         for (TorrentListGrabber torrentListGrabber : torrentListGrabbers) {
                             if (!torrentListGrabber.isJobDone()) {
                                 done = false;
