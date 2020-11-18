@@ -41,7 +41,6 @@ public class TorrentListGrabber extends Thread {
                     "aE"+ addedElements.size() + " at \n" + searchURL);
 
             if (isValidData(new Elements[]{endURLElements, torrentTitleElements, seedElements, leechElements, sizeElements, addedElements})) {
-               System.out.println("run: valid data");
                ArrayList<Thread> torrentDescriptorThreads = new ArrayList<>();
                 for (int i = 0; i < endURLElements.size(); i++) {
                     int finalI = i;
@@ -86,7 +85,6 @@ public class TorrentListGrabber extends Thread {
             e.printStackTrace();
         }
         jobDone = true;
-        System.out.println("JOB DONE");
     }
 
 
@@ -95,7 +93,6 @@ public class TorrentListGrabber extends Thread {
         for (Elements elements : elements_array) {
             if (elements_array[0].size() != elements.size()) {
                 valid = false;
-                System.out.println("isValidData: "+elements_array[0].size()+" "+elements.size());
                 break;
             }
         }
