@@ -20,62 +20,92 @@ public class QueryExecutor {
         tableName = "keyword"+tableName;
 
         ResultSet resultSet = null;
+        PreparedStatement preparedStatement = null;
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("Select lastUpdate from updateLogs where tableName = ?", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            preparedStatement = connection.prepareStatement("Select lastUpdate from updateLogs where tableName = ?", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             preparedStatement.setString(1, tableName);
 
             resultSet = preparedStatement.executeQuery();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        if (resultSet != null) {
-            try {
-                resultSet.last();
-                if (resultSet.getRow() != 0) {
-                    resultSet.absolute(1);
-                    return Long.parseLong(resultSet.getString(1));
-                } else {
-                    return 0;
-                }
+            if (resultSet != null) {
+                    resultSet.last();
+                    if (resultSet.getRow() != 0) {
+                        resultSet.absolute(1);
+                        long value = Long.parseLong(resultSet.getString(1));
+                        preparedStatement.close();
+                        resultSet.close();
 
-            } catch (SQLException sqlException) {
-                sqlException.printStackTrace();
+                        return value;
+                    } else {
+                        preparedStatement.close();
+                        resultSet.close();
+                        return 0;
+                    }
+            } else {
                 return 0;
             }
-        } else {
+        } catch (SQLException sqlException) {
+            sqlException.printStackTrace();
+            try {
+                if(preparedStatement!=null){
+                    preparedStatement.close();
+                }
+                if(resultSet!=null){
+                    resultSet.close();
+                }
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
             return 0;
         }
+
     }
 
     public void updateTableLogs(String tableName, long lastUpdated) {
         tableName = "keyword"+tableName;
-
+        PreparedStatement preparedStatement = null;
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO `updateLogs` VALUES(?, ?) ON DUPLICATE KEY UPDATE `lastUpdate` = ?");
+            preparedStatement = connection.prepareStatement("INSERT INTO `updateLogs` VALUES(?, ?) ON DUPLICATE KEY UPDATE `lastUpdate` = ?");
             preparedStatement.setString(1, tableName);
             preparedStatement.setLong(2, lastUpdated);
             preparedStatement.setLong(3, lastUpdated);
             preparedStatement.executeUpdate();
+            preparedStatement.close();
         } catch (SQLException sqlException) {
+            if(preparedStatement!=null){
+                try {
+                    preparedStatement.close();
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+            }
             sqlException.printStackTrace();
         }
     }
 
     public void dropTableIfExists(String tableName) {
         tableName = "keyword"+tableName;
+        PreparedStatement preparedStatement = null;
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("DROP TABLE IF EXISTS `" + tableName + "`");
+            preparedStatement = connection.prepareStatement("DROP TABLE IF EXISTS `" + tableName + "`");
             preparedStatement.executeUpdate();
+            preparedStatement.close();
         } catch (SQLException sqlException) {
+            if(preparedStatement!=null){
+                try {
+                    preparedStatement.close();
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+            }
             sqlException.printStackTrace();
         }
     }
 
     public void createTorrentDataTable(String tableName) {
         tableName = "keyword"+tableName;
-
+        PreparedStatement preparedStatement = null;
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("CREATE TABLE `" + tableName + "`(torrentTitle VARCHAR(512)," +
+            preparedStatement = connection.prepareStatement("CREATE TABLE `" + tableName + "`(torrentTitle VARCHAR(512)," +
                     " torrentSeeds INT," +
                     " torrentLeeches INT," +
                     " torrentSize TEXT NOT NULL," +
@@ -84,8 +114,15 @@ public class QueryExecutor {
                     " TorrentSourceURL TEXT NOT NULL," +
                     " TorrentMagnetURI TEXT NOT NULL)");
             preparedStatement.executeUpdate();
-
+            preparedStatement.close();
         } catch (SQLException sqlException) {
+            if(preparedStatement!=null){
+                try {
+                    preparedStatement.close();
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+            }
             sqlException.printStackTrace();
         }
 
@@ -93,10 +130,10 @@ public class QueryExecutor {
 
     public void insertTorrentDataIntoTable(String tableName, ArrayList<TorrentDescriptor> torrentDescriptors) {
         tableName = "keyword"+tableName;
-
+        PreparedStatement preparedStatement = null;
         for (TorrentDescriptor torrentDescriptor : torrentDescriptors) {
             try {
-                PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO `" + tableName + "` VALUES(?,?,?,?,?,?,?,?)");
+                preparedStatement = connection.prepareStatement("INSERT INTO `" + tableName + "` VALUES(?,?,?,?,?,?,?,?)");
                 preparedStatement.setString(1, torrentDescriptor.getTitle());
                 preparedStatement.setString(2, torrentDescriptor.getSeeds().replace(",",""));
                 preparedStatement.setString(3, torrentDescriptor.getLeeches().replace(",",""));
@@ -106,7 +143,15 @@ public class QueryExecutor {
                 preparedStatement.setString(7, (torrentDescriptor.getBaseURL() + torrentDescriptor.getEndURL()));
                 preparedStatement.setString(8, torrentDescriptor.getEndURLFieldsDescriptor());
                 preparedStatement.executeUpdate();
+                preparedStatement.close();
             } catch (SQLException sqlException) {
+                if(preparedStatement!=null){
+                    try {
+                        preparedStatement.close();
+                    } catch (SQLException throwables) {
+                        throwables.printStackTrace();
+                    }
+                }
                 sqlException.printStackTrace();
                 System.out.println("\ntitle : "+torrentDescriptor.getTitle()+"\n");
                 System.out.println("\nSeeds : "+torrentDescriptor.getSeeds()+"\n");
@@ -116,11 +161,12 @@ public class QueryExecutor {
     }
 
     public ArrayList<KeywordTorrent> getTorrentDataFromKeywordTable(String tableName) {
-
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
         ArrayList<KeywordTorrent> keywordTorrents = new ArrayList<>();
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM `" + tableName + "`");
-            ResultSet resultSet = preparedStatement.executeQuery();
+            preparedStatement = connection.prepareStatement("SELECT * FROM `" + tableName + "`");
+            resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 keywordTorrents.add(new KeywordTorrent(resultSet.getString(1),
                         resultSet.getString(2),
@@ -131,7 +177,20 @@ public class QueryExecutor {
                         resultSet.getString(7),
                         resultSet.getString(8)));
             }
+            preparedStatement.close();
+            resultSet.close();
         } catch (SQLException sqlException) {
+            try {
+                if(preparedStatement!=null){
+                    preparedStatement.close();
+                }
+                if(resultSet!=null){
+                    resultSet.close();
+                }
+
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
             sqlException.printStackTrace();
         }
         return keywordTorrents;
@@ -161,15 +220,29 @@ public class QueryExecutor {
     }
 
     public String getTrending(){
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("Select * from `trending`");
-            ResultSet resultSet = preparedStatement.executeQuery();
+            preparedStatement = connection.prepareStatement("Select * from `trending`");
+            resultSet = preparedStatement.executeQuery();
             StringBuilder result = new StringBuilder();
             while(resultSet.next()){
                 result.append("·").append(resultSet.getString("title"));
             }
+            preparedStatement.close();
+            resultSet.close();
             return result.toString();
         } catch (SQLException sqlException) {
+            try {
+                if(preparedStatement!=null){
+                    preparedStatement.close();
+                }
+                if(resultSet!=null){
+                    resultSet.close();
+                }
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
             sqlException.printStackTrace();
             return null;
         }
