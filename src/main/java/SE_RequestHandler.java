@@ -59,7 +59,15 @@ public class SE_RequestHandler extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        if(socket!=null){
+            if(!socket.isClosed()){
+                try {
+                    socket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     public void updateKeywordTable(String searchQuery) {
