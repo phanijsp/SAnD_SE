@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import javax.swing.JTextArea;
 
 
-public class SE_RequestHandler{
+public class SE_RequestHandler extends Thread {
     Socket socket;
     private final long timeConstant = 36000000;
     private final String searchConstant = "·½ÄÒÕØÞðøúþĂĔĜĦ";
@@ -20,6 +20,7 @@ public class SE_RequestHandler{
         this.socket = socket;
     }
 
+    @Override
     public void run() {
         System.out.println("\nClient at " + socket.getInetAddress().toString());
         queryExecutor = new QueryExecutor(ConnectionManager.getConnection());
@@ -27,10 +28,7 @@ public class SE_RequestHandler{
             DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
 
-            System.out.println("Awaiting request from : "+socket.getInetAddress().getHostAddress());
             String searchQuery = dataInputStream.readUTF();
-            System.out.println("Received request from : "+socket.getInetAddress().getHostAddress()+", "+searchQuery);
-
             if (searchQuery.startsWith(searchConstant)) {
                 searchQuery = searchQuery.replace(searchConstant, "");
                 searchQuery = searchQuery.trim().toLowerCase();
