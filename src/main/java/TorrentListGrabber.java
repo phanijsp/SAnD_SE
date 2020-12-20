@@ -13,7 +13,7 @@ public class TorrentListGrabber extends Thread {
     private String searchURL;
     private ArrayList<TorrentDescriptor> torrentDescriptors = new ArrayList<>();
     private boolean jobDone = false;
-    private int maxMagnetsPerSite = 10;
+    private int maxMagnetsPerSite = 6;
     String TAG = "here";
 
     public TorrentListGrabber(String query, TorrentSource torrentSource) throws UnsupportedEncodingException {
