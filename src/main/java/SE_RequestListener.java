@@ -28,9 +28,12 @@ public class SE_RequestListener extends Thread{
             try {
                 serverSocket = new ServerSocket(6969);
                 System.out.println(SE_StartMessage+6969);
+                SE_RequestMaster se_requestMaster = new SE_RequestMaster(3);
+                System.out.println("Started RequestMaster");
                 while(active) {
                     Socket socket = serverSocket.accept();
-                    new SE_RequestHandler(socket).start();
+                    se_requestMaster.addToQueue(socket);
+//                    new SE_RequestHandler(socket).start();
                 }
             }catch(BindException e) {
                 System.out.println(SE_StartFailedMessage);
