@@ -13,7 +13,9 @@ public class TorrentListGrabber extends Thread {
     private String searchURL;
     private ArrayList<TorrentDescriptor> torrentDescriptors = new ArrayList<>();
     private boolean jobDone = false;
+    private final int maxMagnetsPerSite = 10;
     String TAG = "here";
+
     public TorrentListGrabber(String query, TorrentSource torrentSource) throws UnsupportedEncodingException {
         this.torrentSource = torrentSource;
         this.searchURL = torrentSource.getSearchURL().replace(torrentSource.getQueryIdentifier(), URLEncoder.encode(query, "UTF-8"));
@@ -32,23 +34,22 @@ public class TorrentListGrabber extends Thread {
             Elements addedElements = doc.select(torrentSource.getAdded_descriptor());
 
 
-
-            System.out.println("Found eUE "+ endURLElements.size()+
-                    "tTE "+ torrentTitleElements.size()+
-                    "sE "+ seedElements.size() +
-                    "lE "+ leechElements.size()+
-                    "sizeE "+ sizeElements.size()+
-                    "aE"+ addedElements.size() + " at \n" + searchURL);
+            System.out.println("Found eUE " + endURLElements.size() +
+                    "tTE " + torrentTitleElements.size() +
+                    "sE " + seedElements.size() +
+                    "lE " + leechElements.size() +
+                    "sizeE " + sizeElements.size() +
+                    "aE" + addedElements.size() + " at \n" + searchURL);
 
             if (isValidData(new Elements[]{endURLElements, torrentTitleElements, seedElements, leechElements, sizeElements, addedElements})) {
-               ArrayList<Thread> torrentDescriptorThreads = new ArrayList<>();
-                for (int i = 0; i < endURLElements.size(); i++) {
+                ArrayList<Thread> torrentDescriptorThreads = new ArrayList<>();
+                for (int i = 0; i < maxMagnetsPerSite; i++) {
                     int finalI = i;
-                    Thread t = new Thread(){
+                    Thread t = new Thread() {
                         @Override
                         public void run() {
                             String magnetLink = getMagnet(endURLElements.get(finalI).attr("href"));
-                            if(magnetLink.startsWith("magnet")){
+                            if (magnetLink.startsWith("magnet")) {
                                 torrentDescriptors.add(
                                         new TorrentDescriptor(
                                                 torrentSource.getBaseURL(),
@@ -67,15 +68,15 @@ public class TorrentListGrabber extends Thread {
                     t.start();
                     torrentDescriptorThreads.add(t);
                 }
-                while(true){
+                while (true) {
                     boolean done = true;
-                    for(Thread t : torrentDescriptorThreads){
+                    for (Thread t : torrentDescriptorThreads) {
                         if (t.isAlive()) {
                             done = false;
                             break;
                         }
                     }
-                    if(done){
+                    if (done) {
                         break;
                     }
 
@@ -108,17 +109,17 @@ public class TorrentListGrabber extends Thread {
         return torrentDescriptors;
     }
 
-    private String getMagnet(String endUrl){
+    private String getMagnet(String endUrl) {
         String magnetLink = "";
         try {
-            Document document = Jsoup.connect(torrentSource.getBaseURL()+endUrl).followRedirects(true).timeout(5000).get();
+            Document document = Jsoup.connect(torrentSource.getBaseURL() + endUrl).followRedirects(true).timeout(5000).get();
             Elements magnets = document.select(torrentSource.getEndURLMagnet_descriptor());
-            if(magnets.size()>0){
+            if (magnets.size() > 0) {
                 return magnets.get(0).attr("href");
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return  magnetLink;
+        return magnetLink;
     }
 }

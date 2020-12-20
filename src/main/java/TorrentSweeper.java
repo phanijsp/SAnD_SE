@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 public class TorrentSweeper {
     private ArrayList<TorrentDescriptor> torrent_search_results = new ArrayList<>();
+
     public ArrayList<TorrentDescriptor> getTorrents(String query) {
         torrent_search_results.clear();
         try {
@@ -25,9 +26,9 @@ public class TorrentSweeper {
 
 
             ArrayList<TorrentListGrabber> torrentListGrabbers = new ArrayList<>();
-            for(int i = 0 ; i < field_descriptors_array.length() ; i ++){
+            for (int i = 0; i < field_descriptors_array.length(); i++) {
                 JSONObject descriptorObject = field_descriptors_array.getJSONObject(i);
-                if(descriptorObject.keySet().size() == 11){
+                if (descriptorObject.keySet().size() == 11) {
                     TorrentSource torrentSource = new TorrentSource(descriptorObject.getString("source"),
                             descriptorObject.getString("title_descriptor"),
                             descriptorObject.getString("seeds_descriptor"),
@@ -45,25 +46,25 @@ public class TorrentSweeper {
                 }
 
             }
-                    while (true){
-                        boolean done = true;
-                        for (TorrentListGrabber torrentListGrabber : torrentListGrabbers) {
-                            if (!torrentListGrabber.isJobDone()) {
-                                done = false;
-                                break;
-                            }
-                        }
-                        if (!done) {
-                            try {
-                                Thread.sleep(100);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        } else {
-                            onJobDone(torrentListGrabbers);
-                            break;
-                        }
+            while (true) {
+                boolean done = true;
+                for (TorrentListGrabber torrentListGrabber : torrentListGrabbers) {
+                    if (!torrentListGrabber.isJobDone()) {
+                        done = false;
+                        break;
                     }
+                }
+                if (!done) {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    onJobDone(torrentListGrabbers);
+                    break;
+                }
+            }
 
 
         } catch (UnsupportedEncodingException e) {
