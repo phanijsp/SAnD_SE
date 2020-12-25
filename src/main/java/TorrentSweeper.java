@@ -10,7 +10,7 @@ public class TorrentSweeper {
     public ArrayList<TorrentDescriptor> getTorrents(String query) {
         torrent_search_results.clear();
         try {
-            File file = new File("/home/phani_jsp/SAnD_SE/Engine.json");
+            File file = new File("/home/vlad/sand_gcloud_vps/Engine.json");
             BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
             StringBuilder sb = new StringBuilder();
             String line;
