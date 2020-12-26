@@ -10,19 +10,8 @@ public class TorrentSweeper {
     public ArrayList<TorrentDescriptor> getTorrents(String query) {
         torrent_search_results.clear();
         try {
-            File file = new File("/home/vlad/sand_gcloud_vps/Engine.json");
-            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = br.readLine()) != null) {
-                sb.append(line + "\n");
-            }
-            br.close();
 
-            String result = sb.toString();
-
-            JSONObject jsonObject = new JSONObject(result);
-            JSONArray field_descriptors_array = jsonObject.getJSONArray("descriptors");
+            JSONArray field_descriptors_array = SandEngine.getEngine();
 
 
             ArrayList<TorrentListGrabber> torrentListGrabbers = new ArrayList<>();

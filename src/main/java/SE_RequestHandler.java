@@ -9,15 +9,13 @@ import java.net.*;
 import java.util.ArrayList;
 
 
-public class SE_RequestHandler extends Thread {
+public class SE_RequestHandler{
     Socket socket;
-    private final String searchConstant = "·½ÄÒÕØÞðøúþĂĔĜĦ";
 
     public SE_RequestHandler(Socket socket) {
         this.socket = socket;
     }
 
-    @Override
     public void run() {
         System.out.println("\nClient at " + socket.getInetAddress().toString());
         try {
@@ -25,6 +23,7 @@ public class SE_RequestHandler extends Thread {
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
 
             String searchQuery = dataInputStream.readUTF();
+            String searchConstant = "·½ÄÒÕØÞðøúþĂĔĜĦ";
             if (searchQuery.startsWith(searchConstant)) {
                 searchQuery = searchQuery.replace(searchConstant, "");
                 searchQuery = searchQuery.trim().toLowerCase();
@@ -45,6 +44,7 @@ public class SE_RequestHandler extends Thread {
                 }
             }
         }
+        System.gc();
     }
 
     public String getTorrentsInJSON(String searchQuery) {
