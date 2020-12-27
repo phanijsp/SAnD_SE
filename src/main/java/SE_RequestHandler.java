@@ -17,7 +17,6 @@ public class SE_RequestHandler{
     }
 
     public void run() {
-        System.out.println("\nClient at " + socket.getInetAddress().toString());
         try {
             DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
@@ -27,20 +26,20 @@ public class SE_RequestHandler{
             if (searchQuery.startsWith(searchConstant)) {
                 searchQuery = searchQuery.replace(searchConstant, "");
                 searchQuery = searchQuery.trim().toLowerCase();
-                System.out.println("\nClient at " + socket.getInetAddress().toString() + " searched for " + searchQuery);
+                System.out.println("\n\n\nRequest from " + socket.getInetAddress().toString() + " searched for " + searchQuery);
 
                 String result = getTorrentsInJSON(searchQuery);
                 objectOutputStream.writeObject(result);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("IOException occurred at line 36 of SE_RequestHandler.java");
         }
         if (socket != null) {
             if (!socket.isClosed()) {
                 try {
                     socket.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    System.out.println("IOException occurred at line 36 of SE_RequestHandler.java while trying to close a socket");
                 }
             }
         }

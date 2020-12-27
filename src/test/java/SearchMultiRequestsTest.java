@@ -5,7 +5,7 @@ import java.io.ObjectInputStream;
 import java.net.Socket;
 
 public class SearchMultiRequestsTest {
-    private static int numConnections = 5;
+    private static int numConnections = 10;
     public static void main(String[] args) {
         for(int i = 0 ; i < numConnections ; i++){
             final int finali = i;

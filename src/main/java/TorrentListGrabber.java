@@ -86,7 +86,7 @@ public class TorrentListGrabber extends Thread {
                 }
             }
         } catch (Exception e) {
-            System.out.println(searchURL);
+            System.out.println("Exception at 89 of TorrentListGrabber while trying to parse url "+searchURL);
             e.printStackTrace();
         }
         jobDone = true;
@@ -121,7 +121,7 @@ public class TorrentListGrabber extends Thread {
                 return magnets.get(0).attr("href");
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("IOException at line 124 of TorrentListGrabber.java while trying to parse magnet link from url "+endUrl);
         }
         return magnetLink;
     }

@@ -12,7 +12,7 @@ public class SE_RequestListener extends Thread {
 
     @Override
     public void run() {
-        ExecutorService executorService = Executors.newFixedThreadPool(5);
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {
             ServerSocket serverSocket = new ServerSocket(6969);
             String SE_StartMessage = "\nStatus: SE running at port ";
