@@ -59,7 +59,7 @@ public class SE_RequestHandler{
             jsonObjectKT.put("torrentSize", torrentDescriptor.getSize());
             jsonObjectKT.put("torrentAdded", torrentDescriptor.getAdded());
             jsonObjectKT.put("TorrentSource", torrentDescriptor.getSource());
-            jsonObjectKT.put("TorrentSourceURL", torrentDescriptor.getBaseURL() + torrentDescriptor.getEndURL());
+            jsonObjectKT.put("TorrentSourceURL",  new Utils().appendBaseEndUrls(torrentDescriptor.getBaseURL(), torrentDescriptor.getEndURL())); //torrentDescriptor.getBaseURL() + torrentDescriptor.getEndURL())
             jsonObjectKT.put("TorrentMagnetURI", torrentDescriptor.getEndURLFieldsDescriptor());
             jsonArray.put(i, jsonObjectKT);
         }

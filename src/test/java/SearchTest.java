@@ -8,7 +8,7 @@ public class SearchTest {
     public static void main(String[] args) {
         try {
             Socket socket = new Socket("localhost", 6969);
-            new DataOutputStream(socket.getOutputStream()).writeUTF("·½ÄÒÕØÞðøúþĂĔĜĦsai");
+            new DataOutputStream(socket.getOutputStream()).writeUTF("·½ÄÒÕØÞðøúþĂĔĜĦmagadheera");
             String result = (String) new ObjectInputStream(socket.getInputStream()).readObject();
             System.out.println(result);
         } catch (IOException e) {
